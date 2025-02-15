@@ -1,8 +1,7 @@
 StoreServicesAPI.sln
 .vscode/settings.json
-StoreServicesAPI/appsettings.Development.json
-StoreServicesAPI/appsettings.json
-StoreServicesAPI/StoreServicesAPI.csproj
-StoreServicesAPI/StoreServicesAPI.http
 StoreServicesAPI/obj/
 StoreServicesAPI/Properties/
+StoreServicesAPI/bin/
+StoreServicesAPI/Migrations/
+.DS_Store
