@@ -57,18 +57,42 @@ namespace StoreServicesAPI.Store.Controllers
 
             var customers = LocalStoreData.Orders
                 .Where(order => order.Date >= cutoffDate)
-                .GroupBy(order => order.ClientId) 
+                .GroupBy(order => order.ClientId)
                 .Select(group => new CustomerPurchaseInfo
                 {
                     ClientId = group.Key,
-                    FullName = group.FirstOrDefault().Client.FullName, 
-                    LastPurchaseDate = group.Max(order => order.Date) 
+                    FullName = group.FirstOrDefault().Client.FullName,
+                    LastPurchaseDate = group.Max(order => order.Date)
                 })
                 .ToList();
 
             return Ok(customers);
         }
 
-        
+        [HttpGet("PopularCategories/{clientId}")]
+        public ActionResult<IEnumerable<CategoryPurchaseInfo>> GetPopularCategories(int clientId)
+        {
+            var categories = LocalStoreData.Orders
+                .Where(order => order.ClientId == clientId) // Фільтруємо за клієнтом
+                .SelectMany(order => order.OrderProducts)   // Отримуємо всі покупки клієнта
+                .GroupBy(product => product.Product.Category) // Групуємо за категорією продукту
+                .Select(group => new CategoryPurchaseInfo
+                {
+                    // CategoryId = group,
+                    CategoryName = group.FirstOrDefault().Product.Category,
+                    TotalQuantity = group.Sum(product => product.Quantity) // Підрахунок кількості одиниць
+                })
+                .ToList();
+
+            if (!categories.Any())
+            {
+                return Ok("Цей клієнт не здійснював покупок.");
+            }
+
+            return Ok(categories);
+        }
+
+
+
     }
 }
